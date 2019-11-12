@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class Join
  */
-@WebServlet("/Join") 
+@WebServlet("/Join")
 public class Join extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
+    /** 
      * @see HttpServlet#HttpServlet()
      */
     public Join() {
