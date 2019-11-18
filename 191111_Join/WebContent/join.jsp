@@ -13,6 +13,47 @@
 		var emailRule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 		$("#email").on("focusout", function(){
 			var u_email = $("#email").val();
+			$.ajax({
+				url:'ajax_join.php',
+				type:'post',
+				dataType:'xml',
+				data:u_email,
+				success:function(data){
+					if(data == 1)
+					{
+						$("#emailAlert").text("이미 가입된 이메일 주소입니다. 다른 이메일을 입력하여 주세요.");
+					}
+					else
+					{
+						if(u_email == "")
+						{
+							$("#emailAlert").text("이메일을 입력하세요.");
+							$(this).parent().addClass("on");
+						}
+						else if(!emailRule.test(u_email))
+						{
+							$("#emailAlert").text("이메일 형식이 올바르지 않습니다.");
+							$(this).parent().addClass("on");
+						}
+						else
+						{
+							$("#emailAlert").text("");
+							$(this).parent().removeClass("on");
+							$(this).next().addClass("on");
+						}
+					}
+				}
+			});
+		});
+		
+		
+		
+		
+		
+		
+		/* var emailRule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+		$("#email").on("focusout", function(){
+			var u_email = $("#email").val();
 			if(u_email == "")
 			{
 				$("#emailAlert").text("이메일을 입력하세요.");
@@ -29,7 +70,7 @@
 				$(this).parent().removeClass("on");
 				$(this).next().addClass("on");
 			}
-		})
+		}) */
 		//pw validation : epthffh.tistory.com/entry/비밀번호-정규식 [물고기 개발자의 블로그]
 		//var pwRule = /^.*(?=^.{6,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
 		var pwRule_en = /^.*(?=^.{6,15}$)(?=.*[a-zA-Z]).*$/;
