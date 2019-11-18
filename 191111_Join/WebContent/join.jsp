@@ -21,15 +21,15 @@
 			else if(!emailRule.test(u_email))
 			{
 				$("#emailAlert").text("이메일 형식이 올바르지 않습니다.");
-				$(this).addClass("on");
+				$(this).parent().addClass("on");
 			}
 			else
 			{
 				$("#emailAlert").text("");
-				$(this).removeClass("on");
+				$(this).parent().removeClass("on");
+				$(this).next().addClass("on");
 			}
 		})
-		
 		//pw validation : epthffh.tistory.com/entry/비밀번호-정규식 [물고기 개발자의 블로그]
 		//var pwRule = /^.*(?=^.{6,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
 		var pwRule_en = /^.*(?=^.{6,15}$)(?=.*[a-zA-Z]).*$/;
@@ -43,37 +43,46 @@
 			if(u_pw.length < 6)
 			{
 				$("#pwAlert").text("비밀번호는 6~15자 이내로 입력하셔야 합니다.")
-				$(this).addClass("on");
+				$(this).parent().addClass("on");
 			}
 			else if(pwRule1.test(u_pw) || pwRule2.test(u_pw) || pwRule3.test(u_pw))
 			{
 				$("#pwAlert").text("");
-				$(this).removeClass("on");
+				$(this).parent().removeClass("on");
+				$(this).next().addClass("on");
 			}
 			else if(pwRule_en.test(u_pw))
 			{
 				$("#pwAlert").text("비밀번호는 영자로만 입력할 수 없습니다.");
-				$(this).addClass("on");
+				$(this).parent().addClass("on");
 			}
 			else if(pwRule_num.test(u_pw))
 			{
 				$("#pwAlert").text("비밀번호는 숫자로만 입력할 수 없습니다.");
-				$(this).addClass("on");
+				$(this).parent().addClass("on");
 			}
 		});
 		
 		//password check
 		$("#pwCheck").on("focusout", function(){
 			var u_pwCheck = $("#pwCheck").val();
-			if(u_pwCheck != $("#pw").val())
+			if(u_pwCheck == "")
 			{
 				$("#pwCheckAlert").text("비밀번호가 일치하지 않습니다.");
-				$(this).addClass("on");
+				$(this).parent().addClass("on");
+				$("#pwAlert").text("비밀번호는 6~15자 이내로 입력하셔야 합니다.")
+				$("#pw").parent().addClass("on");
+			}
+			else if(u_pwCheck != $("#pw").val())
+			{
+				$("#pwCheckAlert").text("비밀번호가 일치하지 않습니다.");
+				$(this).parent().addClass("on");
 			}
 			else
 			{
 				$("#pwCheckAlert").text("");
-				$(this).removeClass("on");
+				$(this).parent().removeClass("on");
+				$(this).next().addClass("on");
 			}
 		});
 		
@@ -86,34 +95,51 @@
 			if(!nameRule.test(u_name))
 			{
 				$("#nameAlert").text("이름을 정확히 입력하세요.");
-				$(this).addClass("on");
+				$(this).parent().addClass("on");
 			}
 			else
 			{
 				$("#nameAlert").text("");
-				$(this).removeClass("on");
+				$(this).parent().removeClass("on");
+				$(this).next().addClass("on");
 			}
 		});
-		
 		// phone validation : suyou.tistory.com/150 [수유산장]
 		var phoneRule = /^01(?:0|1|[6-9])-(?:\d{3}|\d{4})-\d{4}|01(?:0|1|[6-9])(?:\d{3}|\d{4})\d{4}$/;
-	
 		$("#phone").on("focusout", function(){
 			var u_phone = $("#phone").val();
 			if(!phoneRule.test(u_phone))
 			{
 				$("#phoneAlert").text("휴대폰 번호를 정확하게 입력하세요.");
+				$(this).parent().addClass("on");
 			}
 			else
 			{
 				$("#phoneAlert").text("");
+				$(this).parent().removeClass("on");
+				$(this).next().addClass("on");
 			}
+		});
+		
+		// textarea에 focus되면 validated icon 안보이게
+		$("#email").on("focus", function(){
+			$(this).next().removeClass("on");
+		});
+		$("#pwCheck").on("focus", function(){
+			$(this).next().removeClass("on");
+		});
+		$("#name").on("focus", function(){
+			$(this).next().removeClass("on");
+		});
+		$("#phone").on("focus", function(){
+			$(this).next().removeClass("on");
 		});
 	});
 	
 
 </script>
 <style>
+	input:-webkit-autofill {-webkit-box-shadow: 0 0 0 1000px white inset;}
 	* {padding: 0; margin: 0;}
 	a {color: black;}
 	div {
@@ -146,9 +172,21 @@
 		text-align: center;
 		line-height: 32px;
 		font-size: 25px;
+		
+	}
+	.icon {
+		display: block;
 		border-right: solid 1px #CCCCCC;
 		background: #FAFAFA;
 		color: #CCCCCC;
+	}
+	.validated {
+		background: white;
+		color: #0074E9;
+		display: none;
+	}
+	.validated.on {
+		display: block;
 	}
 	#CoupangJoin>div {color: #E52528;}
 	
@@ -167,7 +205,7 @@
 	#btnDiv{
 	text-align: center;
 	}
-	.on {border: solid 1px #E52528}
+	.inputBox.on {border: solid 1px #E52528}
 
 	footer {
 		width: 450px;
@@ -183,32 +221,37 @@
 	</header>
 	<form name="CoupangJoin" id="CoupangJoin" action="Join" method="post">
 		<div class="inputBox">
-			<i class="far fa-envelope"></i>
+			<i class="far fa-envelope icon"></i>
 			<input type="text" name="email" id="email" placeholder="아이디(이메일)">
+			<i class="fas fa-check validated"></i>
 		</div>
 		<div id="emailAlert"></div>
 		
 		<div class="inputBox">
-			<i class="fas fa-unlock"></i>
+			<i class="fas fa-unlock icon"></i>
 			<input type="password" name="pw" id="pw" maxlength="15" placeholder="비밀번호(영문 숫자 특수문자 2가지 이상 6~15자 이내)">
+			<i class="fas fa-check validated"></i>
 		</div>
 		<div id="pwAlert"></div>
 		
 		<div class="inputBox">
-			<i class="fas fa-unlock-alt"></i>
+			<i class="fas fa-unlock-alt icon"></i>
 			<input type="password" name="pwCheck" id="pwCheck" placeholder="비밀번호 확인">
+			<i class="fas fa-check validated"></i>
 		</div>
 		<div id="pwCheckAlert"></div>
 		
 		<div class="inputBox">
-			<i class="far fa-user"></i>
+			<i class="far fa-user icon"></i>
 			<input type="text" name="name" id="name" placeholder="이름">
+			<i class="fas fa-check validated"></i>
 		</div>
 		<div id="nameAlert"></div>
 		
 		<div class="inputBox">
-			<i class="fas fa-mobile-alt"></i>
+			<i class="fas fa-mobile-alt icon"></i>
 			<input type="text" name="phone" id="phone" placeholder="휴대폰 번호">
+			<i class="fas fa-check validated"></i>
 		</div>
 		<div id="phoneAlert"></div>
 		<div id="btnDiv">
