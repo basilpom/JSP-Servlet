@@ -16,7 +16,7 @@
 	<table>
 		<tr>
 			<th>작성자</th> <td>${board.name}</td>
-			<th>이메일</th> <td>${board.email}</td>
+			<th>이메일</th> <td><%-- ${board.email} --%></td>
 		</tr>
 		<tr>
 			<th>작성일</th> <td>${board.writedate}</td>
@@ -42,8 +42,26 @@
 	<input type="button" value="게시글 등록" onClick="location.href='BoardServlet?command=board_write_form'">
 	<br />
 	<!-- 댓글목록 ------------------------------------------------------------------------->
+	<form name="frmUpdate" action="BoardServlet" method="post">
+	<input type="hidden" name="command" value="reply_update">
 	<table class="list">
 		<c:forEach var="reply" items="${replyList}">
+		<c:choose>
+		<c:when test="${reply.no == param.no}">
+		<input type="hidden" name="pNum" value="${board.num}">
+		<input type="hidden" name="no" value="${reply.no}">
+		<tr class="update">
+			<td style="border: none;">
+				<input type="text" name="name" placeholder="name" value="${reply.name}"><br />
+				<input type="password" name="password" placeholder="password"><br />
+				<textarea name="content" rows="5" cols="100" placeholder="content">${reply.content}</textarea>
+			</td>
+			<td width="20%" style="border: none;">
+				<input type="submit" value="수정" onClick="return replyUpdateCheck()">
+				<input type="button" value="취소" onClick="history.go(-1)">
+		</tr>
+		</c:when>
+		<c:otherwise>
 		<tr class="record">
 			<td style="border: none;">
 				${reply.name}<br />
@@ -58,8 +76,11 @@
 		<tr>
 			<td style="border: none;" colspan="2"><hr></td>
 		</tr>
+		</c:otherwise>
+		</c:choose>
 		</c:forEach>
 	</table>
+	</form>
 	<!-- 댓글목록 -->
 	<!-- 댓글 입력 폼 ----------------------------------------------------------------------->
 	<form name="frm" action="BoardServlet" method="post">
